@@ -213,6 +213,7 @@
 
         videoElm.addEventListener("seeking", function (e) {
             console.log("seeking")
+            
         })
 
         videoElm.addEventListener("seeked", function(e) {
@@ -284,23 +285,23 @@
 
         const bufferVoid = document.querySelector(".buffer-void")
 
-        // bufferVoid.addEventListener("mouseenter", function (e) {
-        //     updateStartEnd(videoElm.currentTime, videoElm.duration)
-        //     setScrubberPosition(videoElm.currentTime, videoElm.duration)
+        bufferVoid.addEventListener("mouseenter", function (e) {
+            updateStartEnd(videoElm.currentTime, videoElm.duration)
+            setScrubberPosition(videoElm.currentTime, videoElm.duration)
 
-        //     const bvChromes = document.querySelector('.bv-chromes')
-        //     bvChromes.style.display = "block"
-        // })
+            const bvChromes = document.querySelector('.bv-chromes')
+            bvChromes.style.display = "block"
+        })
 
-        // bufferVoid.addEventListener("mouseleave", function (e) {
-        //     const bvChromes = document.querySelector('.bv-chromes')
+        bufferVoid.addEventListener("mouseleave", function (e) {
+            const bvChromes = document.querySelector('.bv-chromes')
 
-        //     if (videoElm.paused || videoElm.ended) {
-        //         bvChromes.style.display = "block"
-        //     } else {
-        //         bvChromes.style.display = "none"
-        //     }
-        // })
+            if (videoElm.paused || videoElm.ended) {
+                bvChromes.style.display = "block"
+            } else {
+                bvChromes.style.display = "none"
+            }
+        })
     </script>
 </body>
 
