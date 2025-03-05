@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.buffer-void {
+    @apply absolute
+}

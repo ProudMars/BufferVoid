@@ -1,0 +1,31 @@
+{
+  "name": "@repo/react",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./dist/styles": "./dist/styles.css",
+    "./src/styles": "./src/styles.css",
+    "./components/*": "./src/components/*.tsx"
+  },
+  "scripts": {
+    "test": "echo 'Add test script here'",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.8",
+    "@types/node": "^22.13.5",
+    "@types/react": "19.0.8",
+    "@types/react-dom": "19.0.3",
+    "eslint": "^9.20.0",
+    "tailwindcss": "^4.0.8",
+    "typescript": "^5.7.3",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@repo/video-player": "workspace:*"
+  }
+}

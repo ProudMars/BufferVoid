@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@layer components {
+    .buffer-void {
+        @apply [--aspect-ratio-width:16] [--aspect-ratio-height:19] [--bv-player-height:400] [--bv-player-width:calc(var(--bv-player-height)*(var(--aspect-ratio-width)/var(--aspect-ratio-height)))] relative bg-black select-none;
+    }
+
+    .bv-video-container {
+        @apply w-full h-full;
+    }
+
+    .bv-video-player {
+        @apply w-(--bv-player-width) select-none;
+    }
+
+    .bv-chromes {
+        @apply absolute bottom-0 left-3 w-[calc(100%-var(--spacing)*6)] transition-all duration-700;
+    }
+
+    .bv-progress-bar {
+        @apply relative select-none touch-none cursor-pointer h-[calc(var(--spacing)*1.25)] w-full;
+    }
+
+    .bv-bar {
+        @apply [&:hover_.bv-progress-list]:scale-y-100 [&:hover_.bv-progress-list]:transition-all [&:hover_.bv-progress-list]:duration-200;
+    }
+
+    .bv-progress-list {
+        @apply scale-y-60 transition-all duration-200 bg-amber-50 absolute w-full h-full bottom-0;
+    }
+
+    .bv-scrubber {
+        @apply w-3.5 h-3.5 rounded-full bg-amber-200 absolute -top-[calc(var(--spacing)*1.15)] -left-1.5
+    }
+
+    
+}
+
+
+video:-webkit-full-screen::-webkit-media-controls {
+    display: none !important;
+}
+
+video:-moz-full-screen::-moz-media-controls {
+    display: none !important;
+}
+
+video:fullscreen::-webkit-media-controls {
+    display: none !important;
+}

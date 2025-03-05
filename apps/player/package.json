@@ -1,0 +1,21 @@
+{
+  "name": "player",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@repo/video-player": "workspace:*"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.9",
+    "tailwindcss": "^4.0.8",
+    "vite": "^6.2.0"
+  }
+}

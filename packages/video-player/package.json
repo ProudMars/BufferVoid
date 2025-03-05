@@ -1,0 +1,35 @@
+{
+  "name": "@repo/video-player",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./src/*.ts": "./src/*.ts",
+    "./dist/*": "./dist/*.mjs",
+    "./styles.css": "./dist/styles.css"
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup && postcss src/styles/styles.css -o dist/styles.css",
+    "test": "echo 'Add test script here'",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@tailwindcss/cli": "^4.0.8",
+    "@tailwindcss/postcss": "^4.0.8",
+    "@types/react": "19.0.8",
+    "@types/react-dom": "19.0.3",
+    "eslint": "^9.20.0",
+    "postcss": "^8.5.3",
+    "postcss-cli": "^11.0.0",
+    "tailwindcss": "^4.0.8",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
