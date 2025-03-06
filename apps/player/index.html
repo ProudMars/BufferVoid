@@ -25,8 +25,12 @@
                             <div class="bv-bar w-full h-full">
                                 <div class="pt-6 absolute -bottom-1.5 w-full"></div>
                                 <div class="bv-progress-list relative w-full h-full">
-                                    <div class="bv-play-progress w-full h-full absolute left-0 bottom-0 origin-top-left bg-amber-200"></div>
-                                    <div class="bv-progress-hover w-full h-full absolute left-0 bottom-0 origin-top-left"></div>
+                                    <div
+                                        class="bv-play-progress w-full h-full absolute left-0 bottom-0 origin-top-left bg-amber-200">
+                                    </div>
+                                    <div
+                                        class="bv-progress-hover w-full h-full absolute left-0 bottom-0 origin-top-left">
+                                    </div>
                                     <div class="bv-progress-loaded w-full h-full absolute left-0 bottom-0"></div>
                                 </div>
                             </div>
@@ -196,7 +200,6 @@
             console.log("New Scrubber Position", newScrubberPosition)
 
             bvScrubber.style.transform = `translateX(${newScrubberPosition}px)`
-            bvScrubber.style.transition = `transform 250ms linear`
         }
 
         videoElm.addEventListener("timeupdate", function (e) {
@@ -205,19 +208,38 @@
 
             updateStartEnd(currentTime, duration)
             setScrubberPosition(currentTime, duration)
-            
+
             const bvPlayProgressBar = document.querySelector('.bv-play-progress')
-            const playScrubberPos = currentTime/duration
+            const playScrubberPos = currentTime / duration
             bvPlayProgressBar.style.transform = `scaleX(${playScrubberPos})`
         })
 
         videoElm.addEventListener("seeking", function (e) {
             console.log("seeking")
-            
         })
 
-        videoElm.addEventListener("seeked", function(e) {
+        videoElm.addEventListener("seeked", function (e) {
             console.log("seeked")
+        })
+
+        videoElm.addEventListener('click', function (e) {
+            if (this.paused) {
+                play()
+            } else {
+                pause()
+            }
+        })
+
+        videoElm.addEventListener("keypress", function(e) {
+            const key = e.keyCode
+            console.log(key)
+            if (key == 32) {
+                if (this.paused) {
+                    play()
+                } else {
+                    pause()
+                }
+            }
         })
 
         fullscreenBtn.addEventListener('click', (e) => {
@@ -266,7 +288,7 @@
         function updateStartEnd(start, end) {
             const startEnd = document.querySelector(".bv-start-end > .bv-time-wrapper")
 
-            if (startEnd) {
+            if (startEnd && videoElm.readyState >= HTMLMediaElement.HAVE_METADATA) {
                 const startTimeNode = document.createElement("span")
                 startTimeNode.textContent = convertSecondsToHMS(start)
                 startTimeNode.classList.add("inline-block")
@@ -290,17 +312,32 @@
             setScrubberPosition(videoElm.currentTime, videoElm.duration)
 
             const bvChromes = document.querySelector('.bv-chromes')
-            bvChromes.style.display = "block"
+            bvChromes.style.opacity = 1
         })
 
         bufferVoid.addEventListener("mouseleave", function (e) {
             const bvChromes = document.querySelector('.bv-chromes')
 
             if (videoElm.paused || videoElm.ended) {
-                bvChromes.style.display = "block"
+                bvChromes.style.opacity = 1
             } else {
-                bvChromes.style.display = "none"
+                bvChromes.style.opacity = 0
             }
+        })
+
+        const bvBar = document.querySelector(".bv-progress-bar")
+        bvBar.addEventListener("click", function (e) {
+            const duration = videoElm.duration
+            const width = this.getBoundingClientRect().width
+
+            console.log("width: ", width, "offsetX: ", e, e.target)
+
+            const seekPosition = (e.offsetX / width) * duration
+
+            console.log("seekPosition: ", seekPosition)
+
+            videoElm.currentTime = seekPosition
+            setScrubberPosition(seekPosition, duration)
         })
     </script>
 </body>
