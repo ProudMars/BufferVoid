@@ -30,10 +30,10 @@
     }
 
     .bv-scrubber {
-        @apply w-3.5 h-3.5 rounded-full bg-amber-200 absolute -top-[calc(var(--spacing)*1.15)] -left-1.5
+        @apply w-3.5 h-3.5 rounded-full bg-amber-200 absolute -top-[calc(var(--spacing)*1.25)] -left-[calc(var(--spacing)*1.75)];
     }
 
-    
+
 }
 
 

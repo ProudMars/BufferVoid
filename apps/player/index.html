@@ -230,7 +230,7 @@
             }
         })
 
-        videoElm.addEventListener("keypress", function(e) {
+        videoElm.addEventListener("keypress", function (e) {
             const key = e.keyCode
             console.log(key)
             if (key == 32) {
@@ -330,9 +330,12 @@
             const duration = videoElm.duration
             const width = this.getBoundingClientRect().width
 
-            console.log("width: ", width, "offsetX: ", e, e.target)
+            const barLeft = this.getBoundingClientRect().left;
+            const clickX = e.clientX - barLeft;
 
-            const seekPosition = (e.offsetX / width) * duration
+            console.log("width: ", width, "offsetX: ", clickX, e.target)
+
+            const seekPosition = (clickX / width) * duration
 
             console.log("seekPosition: ", seekPosition)
 
