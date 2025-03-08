@@ -6,18 +6,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buffer Void Player</title>
     <link rel="stylesheet" href="/styles/styles.css">
+    <style>
+        .buffer-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 10;
+        }
+        
+        .buffer-progress {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.2);
+            z-index: 10;
+        }
+        
+        .buffer-progress-bar {
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            display: none;
+            z-index: 10;
+        }
+        
+        .controls-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .control-button {
+            padding: 8px 16px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .control-button:hover {
+            background-color: #3a7bc8;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container mx-auto mt-6">
+        <h1 class="text-2xl font-bold text-center mb-4">Buffer Void Player with Chunk Loading</h1>
+        
         <div class="flex justify-center">
             <div class="flex justify-center">
-                <div class="buffer-void w-full">
-                    <div class="bv-video-container">
+                <div id="buffervoid" class="buffer-void w-full">
+                    <div class="bv-video-container relative">
                         <video controlslist="nodownload nofullscreen noremoteplayback"
                             src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
                             class="bv-video-player">
                         </video>
+                        
+                        <div class="buffer-info">
+                            <div>Chunks: <span id="loaded-chunks">0</span>/<span id="total-chunks">0</span></div>
+                            <div>Buffered: <span id="buffered-seconds">0</span>s</div>
+                            <div>Mode: <span id="loading-mode">Chunked</span></div>
+                        </div>
+                        
+                        <div class="buffer-progress">
+                            <div class="buffer-progress-bar" id="buffer-bar"></div>
+                        </div>
+                        
+                        <div class="loading-indicator" id="loading-indicator">
+                            Loading chunk...
+                        </div>
                     </div>
 
                     <div class="bv-chromes">
@@ -333,16 +412,104 @@
             const barLeft = this.getBoundingClientRect().left;
             const clickX = e.clientX - barLeft;
 
-            console.log("width: ", width, "offsetX: ", clickX, e.target)
-
             const seekPosition = (clickX / width) * duration
-
-            console.log("seekPosition: ", seekPosition)
 
             videoElm.currentTime = seekPosition
             setScrubberPosition(seekPosition, duration)
         })
+
+        // Chunked loading visualization
+        const loadedChunksElement = document.getElementById('loaded-chunks');
+        const totalChunksElement = document.getElementById('total-chunks');
+        const bufferedSecondsElement = document.getElementById('buffered-seconds');
+        const bufferBarElement = document.getElementById('buffer-bar');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        // Update buffer information
+        function updateBufferInfo() {
+            // Update buffered time ranges
+            console.log("Buffered: ", videoElm.buffered);
+            if (videoElm.buffered.length > 0) {
+                const bufferedEnd = videoElm.buffered.end(videoElm.buffered.length - 1);
+                const duration = videoElm.duration;
+                
+                // Update buffered seconds
+                bufferedSecondsElement.textContent = bufferedEnd.toFixed(1);
+                
+                // Update buffer progress bar
+                const bufferPercentage = (bufferedEnd / duration) * 100;
+                bufferBarElement.style.width = `${bufferPercentage}%`;
+            }
+            
+            // Request next animation frame
+            requestAnimationFrame(updateBufferInfo);
+        }
+
+        // Start monitoring buffer
+        updateBufferInfo();
+
+        // Listen for custom events from the StreamLoader
+        window.addEventListener('chunkLoaded', function(e) {
+            if (e.detail) {
+                loadedChunksElement.textContent = e.detail.loadedChunks || '0';
+                totalChunksElement.textContent = e.detail.totalChunks || '0';
+                
+                // Show loading indicator briefly
+                loadingIndicator.style.display = 'block';
+                setTimeout(() => {
+                    loadingIndicator.style.display = 'none';
+                }, 500);
+            }
+        });
+
+        // Listen for buffering events
+        videoElm.addEventListener('waiting', function() {
+            loadingIndicator.style.display = 'block';
+            loadingIndicator.textContent = 'Buffering...';
+        });
+
+        videoElm.addEventListener('playing', function() {
+            loadingIndicator.style.display = 'none';
+        });
+
+        // Add controls container after the player
+        const controlsContainer = document.createElement('div');
+        controlsContainer.className = 'controls-container';
+        
+        const testButton = document.createElement('button');
+        testButton.className = 'control-button';
+        testButton.textContent = 'Test Network Throttling';
+        testButton.addEventListener('click', function() {
+            // Simulate network throttling to test chunked loading
+            const currentSrc = videoElm.src;
+            videoElm.pause();
+            
+            // Dispatch custom event to notify about network throttling
+            window.dispatchEvent(new CustomEvent('networkThrottling', { 
+                detail: { enabled: true }
+            }));
+            
+            loadingIndicator.style.display = 'block';
+            loadingIndicator.textContent = 'Testing throttled network...';
+            
+            // Seek to a random position to force loading new chunks
+            setTimeout(() => {
+                const randomPosition = Math.random() * videoElm.duration * 0.8;
+                videoElm.currentTime = randomPosition;
+                videoElm.play().catch(e => console.error('Play error:', e));
+                
+                setTimeout(() => {
+                    loadingIndicator.style.display = 'none';
+                }, 2000);
+            }, 500);
+        });
+        
+        controlsContainer.appendChild(testButton);
+        document.querySelector('.container').appendChild(controlsContainer);
     </script>
+
+    <!-- Load the Buffer Void player script -->
+    <script type="module" src="/buffer-void.mjs"></script>
 </body>
 
 </html>
